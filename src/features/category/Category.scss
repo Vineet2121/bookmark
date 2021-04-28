@@ -1,0 +1,30 @@
+.accordion_dropdown > .dropdown-toggle::after {
+  font-family: FontAwesome !important;
+  content: '\f013' !important;
+  border: 0 !important;
+}
+
+#accordion-nav-dropdown {
+  right: 0 !important;
+  top: 7px !important;
+  position: absolute !important;
+  z-index: 100 !important;
+  color: #ffff !important;
+}
+.card-header {
+  padding: 0.1rem 1rem !important;
+}
+
+.accordion > .card > .card-header {
+  margin-bottom: 0 !important;
+}
+
+.btn.focus,
+.btn:focus {
+  outline: 0;
+  box-shadow: 0 0 0 0 !important;
+}
+
+svg {
+  margin: 1px 1px !important;
+}
