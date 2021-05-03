@@ -12,6 +12,7 @@ const initialState = {
   categories: [],
   selectedCategory: null,
   categoryFormType: 'New',
+  currentCategory: null,
 };
 
 const axiosInstance = axios.create({
@@ -37,6 +38,9 @@ export const categorySlice = createSlice({
     setFormType: (state, action) => {
       state.categoryFormType = action.payload;
     },
+    setCategory: (state, action) => {
+      state.currentCategory = action.payload;
+    },
   },
 });
 
@@ -45,6 +49,7 @@ const {
   getBookmarkCategories,
   setSelectedCategory,
   setFormType,
+  setCategory,
 } = categorySlice.actions;
 
 export const getCategories = (tabID) => async (dispatch) => {
@@ -61,11 +66,20 @@ export const getCategories = (tabID) => async (dispatch) => {
   }
 };
 
+export const setCurrentCategory = (id) => async (dispatch) => {
+  try {
+    dispatch(setCategory(id));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const getSelectedCategory = (id) => async (dispatch) => {
   try {
     dispatch(asyncActionStart());
 
     const { data } = await axiosInstance.get(`category/${id}`);
+    console.log('cat', data);
 
     dispatch(setSelectedCategory(data));
 
@@ -100,7 +114,7 @@ export const newBookmarkCatgory = (category) => async (dispatch) => {
 
     toast.success('Category added successfully');
 
-    dispatch(getBookmarkCategories());
+    dispatch(getCategories(category.userTabID));
 
     dispatch(asyncActionFinish());
   } catch (error) {
@@ -116,6 +130,23 @@ export const editBookmarkCategory = (category) => async (dispatch) => {
     await axiosInstance.put(`category/updatecategory`, category);
 
     toast.success('Category updated successfully');
+
+    dispatch(getBookmarkCategories());
+
+    dispatch(asyncActionFinish());
+  } catch (error) {
+    dispatch(asyncActionError(error));
+    toast.error(error.message);
+  }
+};
+
+export const deleteBookmarkCategory = (category) => async (dispatch) => {
+  try {
+    dispatch(asyncActionStart());
+
+    await axiosInstance.put(`category/deletecategory`, category);
+
+    toast.success('Category deleted successfully');
 
     dispatch(getBookmarkCategories());
 

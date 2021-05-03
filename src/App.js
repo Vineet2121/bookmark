@@ -22,9 +22,11 @@ function App() {
       />
       <ModalManager />
 
-      <BrowserRouter basename={process.env.PUBLIC_URL}>
+      <HomeScreen />
+
+      {/* <BrowserRouter basename={process.env.PUBLIC_URL}>
         <Route path='/' component={HomeScreen} exact />
-      </BrowserRouter>
+      </BrowserRouter> */}
     </Container>
   );
 }

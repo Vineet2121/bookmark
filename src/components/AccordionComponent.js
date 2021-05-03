@@ -1,9 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
+import { useDispatch } from 'react-redux';
 import { Accordion, Card, Button, NavDropdown } from 'react-bootstrap';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { openModal } from '../app/common/modals/modalReducer';
+import { setBookmarkFormType } from '../features/bookmark/bookmarkSlice';
+import { setCurrentCategory } from '../features/category/categorySlice';
+import BookmarkList from '../features/bookmark/BookmarkList';
 
 const AccordionComponent = ({ cat }) => {
   const [open, setOpen] = useState(false);
+
+  const dispatch = useDispatch();
+
+  const handleOpenTabModal = (modalType) => {
+    dispatch(openModal({ modalType, showModal: true }));
+  };
 
   return (
     <>
@@ -14,7 +25,16 @@ const AccordionComponent = ({ cat }) => {
         </NavDropdown.Item>
         <NavDropdown.Item href='#action/3.2'>Sort A-Z</NavDropdown.Item>
         <NavDropdown.Item href='#action/3.2'>Sort Z-A</NavDropdown.Item>
-        <NavDropdown.Item href='#action/3.2'>Add Bookmark</NavDropdown.Item>
+        <NavDropdown.Item
+          href='#action/3.2'
+          onClick={() => {
+            dispatch(setCurrentCategory(cat.catID));
+            dispatch(setBookmarkFormType('New'));
+            handleOpenTabModal('BookmarkForm');
+          }}
+        >
+          Add Bookmark
+        </NavDropdown.Item>
         <NavDropdown.Item href='#action/3.2'>
           Open all in Browser
         </NavDropdown.Item>
@@ -37,7 +57,9 @@ const AccordionComponent = ({ cat }) => {
             </Accordion.Toggle>
           </Card.Header>
           <Accordion.Collapse eventKey={cat.catID}>
-            <Card.Body>{cat.catName}</Card.Body>
+            <Card.Body>
+              <BookmarkList catID={cat.catID} />
+            </Card.Body>
           </Accordion.Collapse>
         </Card>
       </Accordion>

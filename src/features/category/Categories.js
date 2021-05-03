@@ -10,9 +10,7 @@ import AccordionComponent from '../../components/AccordionComponent';
 
 const Categories = () => {
   const result = useSelector((state) => state.category.categories);
-
   const selectedTab = useSelector((state) => state.home.selectedTab);
-
   const { loading } = useSelector((state) => state.async);
 
   const dispatch = useDispatch();
@@ -31,7 +29,7 @@ const Categories = () => {
         </div>
       ) : (
         <Card>
-          <Card.Body>
+          <Card.Body className='mt-n2'>
             <Row>
               {result.map((cat) => (
                 <Col key={cat.catID} md={4}>
