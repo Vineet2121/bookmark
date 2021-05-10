@@ -1,5 +1,4 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { Container } from 'react-bootstrap';
 import { ToastContainer } from 'react-toastify';
 import ModalManager from './app/common/modals/ModalManager';
@@ -21,7 +20,6 @@ function App() {
         pauseOnHover
       />
       <ModalManager />
-
       <HomeScreen />
 
       {/* <BrowserRouter basename={process.env.PUBLIC_URL}>

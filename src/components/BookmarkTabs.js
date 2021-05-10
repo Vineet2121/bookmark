@@ -5,25 +5,51 @@ import BookmarkTabContent from './BookmarkTabContent';
 import {
   getSelectedTab,
   getUserBookmarkTabs,
+  updateTabSelection,
 } from '../features/home/homeSlice';
+import Loader from 'react-loader-spinner';
 
 const BookmarkTabs = () => {
   const result = useSelector((state) => state.home.tabs);
+  const selectedTab = useSelector((state) => state.home.selectedTab);
+
   const dispatch = useDispatch();
 
   let { userTabID } = { ...result[0] };
 
-  const [key, setKey] = useState(userTabID);
+  const [defaultActiveKey, setDefaultActiveKey] = useState();
 
   useEffect(() => {
     if (userTabID) {
-      setKey(userTabID);
+      dispatch(updateTabSelection(userTabID));
+      setDefaultActiveKey(userTabID);
     }
-  }, [userTabID]);
+    // } else {
+    //   setDefaultActiveKey(userTabID);
+    // }
+  }, [userTabID, dispatch]);
 
   useEffect(() => {
     dispatch(getUserBookmarkTabs());
   }, [dispatch]);
+
+  const onSelectHandler = (k) => {
+    //setDefaultActiveKey(k);
+    dispatch(updateTabSelection(k));
+  };
+
+  if (!selectedTab)
+    return (
+      <div className='text-center'>
+        <Loader
+          type='ThreeDots'
+          color='#00BFFF'
+          height={80}
+          width={80}
+          secondaryColor='Grey'
+        />
+      </div>
+    );
 
   return (
     <>
@@ -31,12 +57,8 @@ const BookmarkTabs = () => {
         <Card.Body>
           <Tabs
             id='bookmark-tabs'
-            defaultActiveKey={key}
-            onSelect={(k) => {
-              //console.log(k);
-              setKey(k);
-              dispatch(getSelectedTab(k));
-            }}
+            defaultActiveKey={selectedTab.userTabID}
+            onSelect={(k) => onSelectHandler(k)}
           >
             {result.map((tab) => (
               <Tab
@@ -45,7 +67,7 @@ const BookmarkTabs = () => {
                 title={tab.tabName}
                 className='mt-3'
               >
-                <BookmarkTabContent />
+                <BookmarkTabContent tabID={tab.userTabID} />
               </Tab>
             ))}
           </Tabs>

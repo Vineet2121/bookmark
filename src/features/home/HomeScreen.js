@@ -11,7 +11,9 @@ const HomeScreen = () => {
       <Header />
       <main>
         <BookmarkTabs />
+
         <Categories />
+        {/* <Sandbox /> */}
       </main>
       <Footer />
     </>

@@ -1,9 +1,11 @@
-import React, { useEffect, useState, memo, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchBookmarks } from './bookmarkSlice';
-import { Row } from 'react-bootstrap';
-import ReactLoading from 'react-loading';
+import React, { useEffect, useState } from 'react';
+// import { useSelector, useDispatch } from 'react-redux';
+
+// import ReactLoading from 'react-loading';
 import * as axios from 'axios';
+
+import BookmarkItem from '../../components/BookmarkItem';
+const { REACT_APP_BASE_URL } = process.env;
 
 const BookmarkList = ({ catID }) => {
   const [bookmarks, setBookmarks] = useState([]);
@@ -18,32 +20,29 @@ const BookmarkList = ({ catID }) => {
   // console.log(bookmarkList);
 
   useEffect(() => {
+    let ignore = false;
     const fetchBookmarksData = async () => {
       const { data } = await axios(
-        `https://localhost:44339/api/bookmark/bookmarklist/${catID}`
+        `${REACT_APP_BASE_URL}bookmark/bookmarklist/${catID}`
       );
-      setBookmarks(data);
+      if (!ignore) setBookmarks(data);
     };
     fetchBookmarksData();
-  }, []);
-
-  let url = 'https://www.google.com/s2/favicons?domain=';
+    return () => {
+      ignore = true;
+    };
+  }, [catID]);
 
   if (bookmarks.length <= 0) return <p> No data..</p>;
 
   return (
     <>
-      {bookmarks.map((bookmark) => (
-        <Row key={bookmark.bookmarkId}>
-          <img
-            src={url + bookmark.url}
-            alt='bookmark.title'
-            className='favicon'
-          />
-          <a target='_blank' rel='noreferrer' href={bookmark.url}>
-            {bookmark.title}
-          </a>
-        </Row>
+      {bookmarks.map((bookmark, index) => (
+        <BookmarkItem
+          key={bookmark.bookmarkId}
+          bookmark={bookmark}
+          idx={index}
+        />
       ))}
     </>
   );

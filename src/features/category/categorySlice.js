@@ -7,6 +7,7 @@ import {
   asyncActionFinish,
   asyncActionStart,
 } from '../../app/async/asyncReducer';
+const { REACT_APP_BASE_URL } = process.env;
 
 const initialState = {
   categories: [],
@@ -16,7 +17,7 @@ const initialState = {
 };
 
 const axiosInstance = axios.create({
-  baseURL: 'https://localhost:44339/api/',
+  baseURL: REACT_APP_BASE_URL,
   withCredentials: true,
   headers: {
     Accept: 'application/json',
@@ -79,7 +80,6 @@ export const getSelectedCategory = (id) => async (dispatch) => {
     dispatch(asyncActionStart());
 
     const { data } = await axiosInstance.get(`category/${id}`);
-    console.log('cat', data);
 
     dispatch(setSelectedCategory(data));
 
@@ -99,7 +99,6 @@ export const resetTab = () => async (dispatch) => {
 
 export const setCategoryFormType = (type) => async (dispatch) => {
   try {
-    console.log(type);
     dispatch(setFormType(type));
   } catch (error) {
     dispatch(asyncActionError(error));
@@ -115,6 +114,73 @@ export const newBookmarkCatgory = (category) => async (dispatch) => {
     toast.success('Category added successfully');
 
     dispatch(getCategories(category.userTabID));
+
+    dispatch(asyncActionFinish());
+  } catch (error) {
+    dispatch(asyncActionError(error));
+    toast.error(error.message);
+  }
+};
+
+export const updateAccordionState = (catID, accState, userTabID) => async (
+  dispatch
+) => {
+  try {
+    const accordionState = {
+      catID,
+      accState,
+    };
+
+    dispatch(asyncActionStart());
+
+    await axiosInstance.post(`category/UpdateAccordionState`, accordionState);
+
+    dispatch(getCategories(userTabID));
+
+    dispatch(asyncActionFinish());
+  } catch (error) {
+    dispatch(asyncActionError(error));
+    toast.error(error.message);
+  }
+};
+
+export const updateAllAccordionState = (userTabID, type) => async (
+  dispatch
+) => {
+  try {
+    const accordionState = {
+      userTabID,
+      type,
+    };
+
+    dispatch(asyncActionStart());
+
+    await axiosInstance.post(
+      `category/UpdateAllAccordionState`,
+      accordionState
+    );
+
+    dispatch(getCategories(userTabID));
+
+    dispatch(asyncActionFinish());
+  } catch (error) {
+    dispatch(asyncActionError(error));
+    toast.error(error.message);
+  }
+};
+
+export const updateCategoriesIndex = (userTabID, type) => async (dispatch) => {
+  try {
+    const accordionState = {
+      userTabID,
+      type,
+    };
+
+    dispatch(asyncActionStart());
+
+    await axiosInstance.post(`category/SortCategories`, accordionState);
+
+    dispatch(getCategories(userTabID));
 
     dispatch(asyncActionFinish());
   } catch (error) {

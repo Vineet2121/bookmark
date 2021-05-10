@@ -9,10 +9,14 @@ import {
   Form,
 } from 'react-bootstrap';
 import { openModal } from '../app/common/modals/modalReducer';
-import { setFromType } from '../features/home/homeSlice';
-import { setCategoryFormType } from '../features/category/categorySlice';
+import { setFromType, updateTabsIndex } from '../features/home/homeSlice';
+import {
+  setCategoryFormType,
+  updateAllAccordionState,
+  updateCategoriesIndex,
+} from '../features/category/categorySlice';
 
-const BookmarkTabContent = () => {
+const BookmarkTabContent = ({ tabID }) => {
   const dispatch = useDispatch();
 
   const handleOpenTabModal = (modalType) => {
@@ -51,10 +55,38 @@ const BookmarkTabContent = () => {
                 title='Categories'
                 className='drop-button'
               >
-                <Dropdown.Item as='button'>Sort A-Z</Dropdown.Item>
-                <Dropdown.Item as='button'>Sort Z-A</Dropdown.Item>
-                <Dropdown.Item as='button'>Collapse all</Dropdown.Item>
-                <Dropdown.Item as='button'>Expand all</Dropdown.Item>
+                <Dropdown.Item
+                  as='button'
+                  onClick={() => {
+                    dispatch(updateCategoriesIndex(tabID, 'AtoZ'));
+                  }}
+                >
+                  Sort A-Z
+                </Dropdown.Item>
+                <Dropdown.Item
+                  as='button'
+                  onClick={() => {
+                    dispatch(updateCategoriesIndex(tabID, 'ZtoA'));
+                  }}
+                >
+                  Sort Z-A
+                </Dropdown.Item>
+                <Dropdown.Item
+                  as='button'
+                  onClick={() => {
+                    dispatch(updateAllAccordionState(+tabID, 'collapse'));
+                  }}
+                >
+                  Collapse all
+                </Dropdown.Item>
+                <Dropdown.Item
+                  as='button'
+                  onClick={() => {
+                    dispatch(updateAllAccordionState(tabID, 'expand'));
+                  }}
+                >
+                  Expand all
+                </Dropdown.Item>
               </DropdownButton>
             </div>
             <div style={{ display: 'inline-block' }}>
@@ -75,8 +107,22 @@ const BookmarkTabContent = () => {
                 </Dropdown.Item>
                 <Dropdown.Item as='button'>Change color</Dropdown.Item>
                 {/* <Dropdown.Item as='button'>Change Tab order</Dropdown.Item> */}
-                <Dropdown.Item as='button'>Sort A-Z</Dropdown.Item>
-                <Dropdown.Item as='button'>Sort Z-A</Dropdown.Item>
+                <Dropdown.Item
+                  as='button'
+                  onClick={() => {
+                    dispatch(updateTabsIndex(tabID, 'AtoZ'));
+                  }}
+                >
+                  Sort A-Z
+                </Dropdown.Item>
+                <Dropdown.Item
+                  as='button'
+                  onClick={() => {
+                    dispatch(updateTabsIndex(tabID, 'ZtoA'));
+                  }}
+                >
+                  Sort Z-A
+                </Dropdown.Item>
                 <Dropdown.Item as='button'>Share Tab</Dropdown.Item>
               </DropdownButton>
             </div>

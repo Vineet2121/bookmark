@@ -7,6 +7,7 @@ import {
   asyncActionFinish,
   asyncActionStart,
 } from '../../app/async/asyncReducer';
+const { REACT_APP_BASE_URL } = process.env;
 
 const initialState = {
   bookmarks: [],
@@ -17,7 +18,7 @@ const initialState = {
 };
 
 const axiosInstance = axios.create({
-  baseURL: 'https://localhost:44339/api/',
+  baseURL: REACT_APP_BASE_URL,
   withCredentials: true,
   headers: {
     Accept: 'application/json',
@@ -65,7 +66,6 @@ export const fetchBookmarks = (catID) => async (dispatch) => {
     dispatch(bookmarkRequestStart());
 
     const { data } = await axiosInstance.get(`bookmark/bookmarklist/${catID}`);
-    console.log(data);
     return data;
     //dispatch(getBookmarks(data));
   } catch (error) {
@@ -78,7 +78,7 @@ export const getBookmarksList = (catID) => async (dispatch) => {
     dispatch(asyncActionStart());
 
     const result = await axiosInstance.get(`bookmark/bookmarklist/${catID}`);
-    console.log('getBookmarksList called', result);
+
     // if (data) {
     //   dispatch(getBookmarks(data));
     // }
@@ -138,6 +138,19 @@ export const newBookmark = (bookmark) => async (dispatch) => {
   }
 };
 
+export const moveBookmark = (moveBoomark) => async (dispatch) => {
+  try {
+    dispatch(asyncActionStart());
+
+    await axiosInstance.post(`bookmark/movebookmark`, moveBoomark);
+
+    dispatch(asyncActionFinish());
+  } catch (error) {
+    dispatch(asyncActionError(error));
+    toast.error(error.message);
+  }
+};
+
 export const editBookmark = (bookmark) => async (dispatch) => {
   try {
     dispatch(asyncActionStart());
@@ -159,11 +172,31 @@ export const deleteBookmark = (bookmark) => async (dispatch) => {
   try {
     dispatch(asyncActionStart());
 
-    await axiosInstance.put(`bookmark/deletebookmark`, bookmark);
+    await axiosInstance.delete(`bookmark/deletebookmark`, bookmark);
 
     toast.success('Bookmark deleted successfully');
 
     dispatch(getBookmarksList());
+
+    dispatch(asyncActionFinish());
+  } catch (error) {
+    dispatch(asyncActionError(error));
+    toast.error(error.message);
+  }
+};
+
+export const updateBookmarkOrderState = (catID, type) => async (dispatch) => {
+  try {
+    const bookmarksState = {
+      catID,
+      type,
+    };
+
+    dispatch(asyncActionStart());
+
+    await axiosInstance.post(`bookmark/SortBookmarks`, bookmarksState);
+
+    dispatch(getBookmarksList(catID));
 
     dispatch(asyncActionFinish());
   } catch (error) {

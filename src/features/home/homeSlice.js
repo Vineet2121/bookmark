@@ -7,6 +7,8 @@ import {
   asyncActionFinish,
   asyncActionStart,
 } from '../../app/async/asyncReducer';
+import { getCategories } from '../category/categorySlice';
+const { REACT_APP_BASE_URL } = process.env;
 
 //Global
 const initialUser = localStorage.getItem('user')
@@ -21,7 +23,7 @@ const initialState = {
 };
 
 const axiosInstance = axios.create({
-  baseURL: 'https://localhost:44339/api/',
+  baseURL: REACT_APP_BASE_URL,
   //baseURL: 'https://stgknowledgecentral.uhc.com/jobaids/BookmarkToolAPI/api/',
   withCredentials: true,
   headers: {
@@ -51,6 +53,10 @@ export const homeSlice = createSlice({
       state.tabs = action.payload;
     },
     setSelectedTab: (state, action) => {
+      // return {
+      //   ...state,
+      //   selectedTab: action.payload,
+      // };
       state.selectedTab = action.payload;
     },
     setTabFormType: (state, action) => {
@@ -96,7 +102,7 @@ export const getUserBookmarkTabs = () => async (dispatch) => {
 
     dispatch(getUserTabs(data));
 
-    dispatch(setSelectedTab(data[0]));
+    dispatch(getSelectedTab());
 
     dispatch(asyncActionFinish());
     //toast.success('Data loaded successfull');
@@ -105,11 +111,11 @@ export const getUserBookmarkTabs = () => async (dispatch) => {
   }
 };
 
-export const getSelectedTab = (id) => async (dispatch) => {
+export const getSelectedTab = () => async (dispatch) => {
   try {
     dispatch(asyncActionStart());
 
-    const { data } = await axiosInstance.get(`tab/${id}`);
+    const { data } = await axiosInstance.get(`tab/selectedtab`);
 
     dispatch(setSelectedTab(data));
 
@@ -163,6 +169,44 @@ export const editBookmarkTab = (tab, id) => async (dispatch) => {
     toast.success('Tab updated successfully');
 
     dispatch(getUserBookmarkTabs());
+
+    dispatch(asyncActionFinish());
+  } catch (error) {
+    dispatch(asyncActionError(error));
+    toast.error(error.message);
+  }
+};
+
+export const updateTabsIndex = (tabID, type) => async (dispatch) => {
+  try {
+    dispatch(asyncActionStart());
+
+    const tabRequest = { type };
+
+    await axiosInstance.post(`tab/SortTabs`, tabRequest);
+
+    dispatch(getUserBookmarkTabs());
+
+    // dispatch(getCategories(tabID));
+
+    dispatch(asyncActionFinish());
+  } catch (error) {
+    dispatch(asyncActionError(error));
+    toast.error(error.message);
+  }
+};
+
+export const updateTabSelection = (UserTabID) => async (dispatch) => {
+  try {
+    dispatch(asyncActionStart());
+
+    const tabRequest = { UserTabID };
+
+    await axiosInstance.post(`tab/UpdateTabSelection`, tabRequest);
+
+    dispatch(getUserBookmarkTabs());
+
+    // dispatch(getCategories(tabID));
 
     dispatch(asyncActionFinish());
   } catch (error) {
