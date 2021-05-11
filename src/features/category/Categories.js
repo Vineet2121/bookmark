@@ -11,9 +11,8 @@ import AccordionComponent from '../../components/AccordionComponent';
 import Loader from 'react-loader-spinner';
 
 const Categories = memo(() => {
-  const categories = useSelector((state) => state.category.categories);
+  const { categories, loading, error } = useSelector((state) => state.category);
   const selectedTab = useSelector((state) => state.home.selectedTab);
-  const { loading } = useSelector((state) => state.async);
 
   const dispatch = useDispatch();
 
@@ -22,14 +21,6 @@ const Categories = memo(() => {
       dispatch(getCategories(selectedTab.userTabID));
     }
   }, [dispatch, selectedTab]);
-
-  // const reorder = (list, startIndex, endIndex) => {
-  //   const result = Array.from(list);
-  //   const [removed] = result.splice(startIndex, 1);
-  //   result.splice(endIndex, 0, removed);
-
-  //   return result;
-  // };
 
   const onDragEnd = (result) => {
     const { source, destination, draggableId } = result;
@@ -58,17 +49,7 @@ const Categories = memo(() => {
 
   return (
     <>
-      {loading ? (
-        <div className='text-center'>
-          <Loader
-            type='ThreeDots'
-            color='#00BFFF'
-            height={80}
-            width={80}
-            secondaryColor='Grey'
-          />
-        </div>
-      ) : (
+      {!loading && (
         <Card>
           <Card.Body className='mt-n2'>
             <Row>

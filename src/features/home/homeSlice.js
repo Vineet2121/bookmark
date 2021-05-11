@@ -2,11 +2,11 @@ import { createSlice } from '@reduxjs/toolkit';
 import * as axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {
-  asyncActionError,
-  asyncActionFinish,
-  asyncActionStart,
-} from '../../app/async/asyncReducer';
+// import {
+//   asyncActionError,
+//   asyncActionFinish,
+//   asyncActionStart,
+// } from '../../app/async/asyncReducer';
 import { getCategories } from '../category/categorySlice';
 const { REACT_APP_BASE_URL } = process.env;
 
@@ -20,6 +20,8 @@ const initialState = {
   tabs: [],
   selectedTab: null,
   tabFormType: 'New',
+  loading: false,
+  error: null,
 };
 
 const axiosInstance = axios.create({
@@ -62,6 +64,18 @@ export const homeSlice = createSlice({
     setTabFormType: (state, action) => {
       state.tabFormType = action.payload;
     },
+    asyncActionStart: (state, action) => {
+      state.loading = true;
+    },
+
+    asyncActionFinish: (state, action) => {
+      state.loading = false;
+    },
+
+    asyncActionError: (state, action) => {
+      state.error = action.error.message;
+      state.loading = false;
+    },
     // logoutSuccess: (state, action) =>  {
     //   state.user = null;
     //   localStorage.removeItem('user')
@@ -75,6 +89,9 @@ const {
   getUserTabs,
   setSelectedTab,
   setTabFormType,
+  asyncActionStart,
+  asyncActionFinish,
+  asyncActionError,
 } = homeSlice.actions;
 
 export const getUserDetails = () => async (dispatch) => {
@@ -113,13 +130,13 @@ export const getUserBookmarkTabs = () => async (dispatch) => {
 
 export const getSelectedTab = () => async (dispatch) => {
   try {
-    dispatch(asyncActionStart());
+    //dispatch(asyncActionStart());
 
     const { data } = await axiosInstance.get(`tab/selectedtab`);
-
+    console.log('getSelectedTab', data);
     dispatch(setSelectedTab(data));
 
-    dispatch(asyncActionFinish());
+    //dispatch(asyncActionFinish());
     //toast.success('Data loaded successfull');
   } catch (error) {
     dispatch(asyncActionError(error));
@@ -198,7 +215,7 @@ export const updateTabsIndex = (tabID, type) => async (dispatch) => {
 
 export const updateTabSelection = (UserTabID) => async (dispatch) => {
   try {
-    dispatch(asyncActionStart());
+    // dispatch(asyncActionStart());
 
     const tabRequest = { UserTabID };
 
@@ -208,7 +225,7 @@ export const updateTabSelection = (UserTabID) => async (dispatch) => {
 
     // dispatch(getCategories(tabID));
 
-    dispatch(asyncActionFinish());
+    //dispatch(asyncActionFinish());
   } catch (error) {
     dispatch(asyncActionError(error));
     toast.error(error.message);

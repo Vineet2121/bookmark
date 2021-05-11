@@ -2,11 +2,11 @@ import { createSlice } from '@reduxjs/toolkit';
 import * as axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {
-  asyncActionError,
-  asyncActionFinish,
-  asyncActionStart,
-} from '../../app/async/asyncReducer';
+// import {
+//   asyncActionError,
+//   asyncActionFinish,
+//   asyncActionStart,
+// } from '../../app/async/asyncReducer';
 const { REACT_APP_BASE_URL } = process.env;
 
 const initialState = {
@@ -49,6 +49,18 @@ export const bookmarkSlice = createSlice({
     setFormType: (state, action) => {
       state.bookmarkFormType = action.payload;
     },
+    asyncActionStart: (state, action) => {
+      state.loading = true;
+    },
+
+    asyncActionFinish: (state, action) => {
+      state.loading = false;
+    },
+
+    asyncActionError: (state, action) => {
+      state.error = action.error.message;
+      state.loading = false;
+    },
   },
 });
 
@@ -59,6 +71,9 @@ const {
   getBookmarks,
   setSelectedBookmark,
   setFormType,
+  asyncActionStart,
+  asyncActionFinish,
+  asyncActionError,
 } = bookmarkSlice.actions;
 
 export const fetchBookmarks = (catID) => async (dispatch) => {

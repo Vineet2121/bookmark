@@ -20,14 +20,13 @@ const BookmarkTabs = () => {
   const [defaultActiveKey, setDefaultActiveKey] = useState();
 
   useEffect(() => {
-    if (userTabID) {
-      dispatch(updateTabSelection(userTabID));
+    if (selectedTab) {
+      // dispatch(updateTabSelection(selectedTab.userTabID));
+      setDefaultActiveKey(selectedTab.userTabID);
+    } else {
       setDefaultActiveKey(userTabID);
     }
-    // } else {
-    //   setDefaultActiveKey(userTabID);
-    // }
-  }, [userTabID, dispatch]);
+  }, [selectedTab, dispatch, userTabID]);
 
   useEffect(() => {
     dispatch(getUserBookmarkTabs());

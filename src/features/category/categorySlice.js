@@ -2,11 +2,11 @@ import { createSlice } from '@reduxjs/toolkit';
 import * as axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import {
-  asyncActionError,
-  asyncActionFinish,
-  asyncActionStart,
-} from '../../app/async/asyncReducer';
+// import {
+//   asyncActionError,
+//   asyncActionFinish,
+//   asyncActionStart,
+// } from '../../app/async/asyncReducer';
 const { REACT_APP_BASE_URL } = process.env;
 
 const initialState = {
@@ -14,6 +14,8 @@ const initialState = {
   selectedCategory: null,
   categoryFormType: 'New',
   currentCategory: null,
+  loading: false,
+  error: null,
 };
 
 const axiosInstance = axios.create({
@@ -42,6 +44,18 @@ export const categorySlice = createSlice({
     setCategory: (state, action) => {
       state.currentCategory = action.payload;
     },
+    asyncActionStart: (state, action) => {
+      state.loading = true;
+    },
+
+    asyncActionFinish: (state, action) => {
+      state.loading = false;
+    },
+
+    asyncActionError: (state, action) => {
+      state.error = action.error.message;
+      state.loading = false;
+    },
   },
 });
 
@@ -51,6 +65,9 @@ const {
   setSelectedCategory,
   setFormType,
   setCategory,
+  asyncActionStart,
+  asyncActionFinish,
+  asyncActionError,
 } = categorySlice.actions;
 
 export const getCategories = (tabID) => async (dispatch) => {
